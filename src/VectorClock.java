@@ -1,16 +1,24 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VectorClock {
     private int owner;
-    private List <Integer> cells;
+    private List <Integer> vector;
+
+    public static final int CONCURRENT = 0;
+    public static final int LESS_THAN = -1;
+    public static final int NOT_LESS_THAN = 1;
+
+
+
     public VectorClock(int n, int owner){
         /**
          * @param n = processes count
          */
         this.owner = owner;
-        this.cells = new  ArrayList<Integer>(Collections.nCopies(n, 0));
+        this.vector = new  ArrayList<Integer>(Collections.nCopies(n, 0));
     }
 
     private boolean equalTo(VectorClock otherClock) {
@@ -18,16 +26,16 @@ public class VectorClock {
          * ta = tb iff ∀ i, ta[i] = tb[i]
          */
 
-        // return this.cells.get(owner).equals(otherClock.cells.get(owner));
-        return this.cells.equals(otherClock.cells);
+        // return this.vector.get(owner).equals(otherClock.vector.get(owner));
+        return this.vector.equals(otherClock.getVector());
     }
     
     private boolean isLessThanOrEqualTo(VectorClock otherClock) {
         /**
          * ta ≤ tb iff ∀ i, ta[i] ≤ tb[i]
          */
-        for (int i = 0; i < this.cells.size(); i++) {
-            if (this.cells.get(i) > otherClock.cells.get(i)) { return false; }
+        for (int i = 0; i < this.vector.size(); i++) {
+            if (this.getCell(i) > otherClock.getCell(i)) { return false; }
         }
         return true;
     }
@@ -37,12 +45,6 @@ public class VectorClock {
          * ta < tb iff (ta ≤ tb  ^  ta ≠ tb)
          */
         return this.isLessThanOrEqualTo(otherClock) && !this.equalTo(otherClock);
-        /**
-        for (int i = 0; i < this.cells.size(); i++) {
-            if (this.cells.get(i) >= otherClock.cells.get(i)) { return false; }
-        }
-        return true;
-        */
     }
     
     private boolean isConcurrentWith(VectorClock otherClock){
@@ -53,12 +55,37 @@ public class VectorClock {
     }
 
     public int compare(VectorClock otherClass) {
-        if ( this.isConcurrentWith(otherClass)) { return 0; }
-        if ( this.isLessThan(otherClass)) { return -1; }
-        return 1;
+        if ( this.isConcurrentWith(otherClass)) { return CONCURRENT; }
+        if ( this.isLessThan(otherClass)) { return LESS_THAN; }
+        return NOT_LESS_THAN;
     }
 
     public int getOwnerId(){
         return this.owner;
+    }
+
+    public List<Integer> getVector(){
+        return this.vector;
+    }
+
+    public int getCell(int index){
+        return this.vector.get(index);
+    }
+    
+    public void setCell(int index, int newValue){
+        this.vector.set(index, newValue);
+    }
+
+    public void update(VectorClock otherClock) {
+        for (int i = 0; i < this.vector.size(); i++) {
+            if (otherClock.getCell(i) > this.getCell(i)) {
+                this.setCell(i, otherClock.getCell(i));
+            }
+        }
+    }
+
+    @Override
+    public String toString(){
+        return String.format("[ " + vector.stream().map(Object::toString).collect(Collectors.joining(", ")) + " ]" + " for n = " + this.vector.size());
     }
 }
