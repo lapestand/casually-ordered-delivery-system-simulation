@@ -12,10 +12,10 @@ public class VectorClock {
     public static final int NOT_LESS_THAN = 1;
 
 
-
     public VectorClock(int n, int owner){
         /**
          * @param n = processes count
+         * @param owner = Process ID
          */
         this.owner = owner;
         this.vector = new  ArrayList<Integer>(Collections.nCopies(n, 0));
@@ -77,15 +77,21 @@ public class VectorClock {
     }
 
     public void update(VectorClock otherClock) {
-        for (int i = 0; i < this.vector.size(); i++) {
+        for (int i = 0; i < this.getVector().size(); i++) {
             if (otherClock.getCell(i) > this.getCell(i)) {
                 this.setCell(i, otherClock.getCell(i));
             }
         }
+        this.update();
+    }
+
+    public void update() {
+        this.setCell(this.owner, this.getCell(this.owner) + 1);
     }
 
     @Override
     public String toString(){
-        return String.format("[ " + vector.stream().map(Object::toString).collect(Collectors.joining(", ")) + " ]" + " for n = " + this.vector.size());
+        return String.format("[ " + this.getVector().stream().map(Object::toString).collect(Collectors.joining(", ")) + " ]" + " for n = " + this.getVector().size());
     }
+
 }
