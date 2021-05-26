@@ -19,6 +19,7 @@ public class VectorClock {
          */
         this.owner = owner;
         this.vector = new  ArrayList<Integer>(Collections.nCopies(n, 0));
+        this.update();
     }
 
     private boolean equalTo(VectorClock otherClock) {
