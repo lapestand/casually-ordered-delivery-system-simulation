@@ -22,6 +22,15 @@ public class VectorClock {
         this.update();
     }
 
+    public VectorClock(int owner, List <Integer> ts){
+        /**
+         * @param n = processes count
+         * @param owner = Process ID
+         */
+        this.owner = owner;
+        this.vector = new  ArrayList<Integer>(ts);
+    }
+
     private boolean equalTo(VectorClock otherClock) {
         /**
          * ta = tb iff ∀ i, ta[i] = tb[i]
@@ -83,7 +92,6 @@ public class VectorClock {
                 this.setCell(i, otherClock.getCell(i));
             }
         }
-        this.update();
     }
 
     public void update() {
@@ -96,3 +104,6 @@ public class VectorClock {
     }
 
 }
+
+
+
