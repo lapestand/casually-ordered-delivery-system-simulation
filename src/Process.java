@@ -6,6 +6,8 @@ public class Process {
         this.vector = new VectorClock(processCount, processID);
     }
 
+    public VectorClock getVector() { return this.vector; }
+
     public void send() {
 
 

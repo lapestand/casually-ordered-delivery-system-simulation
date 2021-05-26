@@ -25,7 +25,7 @@ public class Main {
         
         Process process = new Process(processCount, currentProcessID);
 
-        System.out.println(process.vector.toString());
+        System.out.println(process.getVector().toString());
 
         int option;
         do {
