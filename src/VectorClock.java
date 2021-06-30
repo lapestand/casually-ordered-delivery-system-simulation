@@ -25,7 +25,7 @@ public class VectorClock {
     public VectorClock(int owner, List <Integer> ts){
         /**
          * @param n = processes count
-         * @param owner = Process ID
+         * @param ts = timestamp value for importing
          */
         this.owner = owner;
         this.vector = new  ArrayList<Integer>(ts);
@@ -36,7 +36,6 @@ public class VectorClock {
          * ta = tb iff ∀ i, ta[i] = tb[i]
          */
 
-        // return this.vector.get(owner).equals(otherClock.vector.get(owner));
         return this.vector.equals(otherClock.getVector());
     }
     
@@ -65,8 +64,13 @@ public class VectorClock {
     }
 
     public int compare(VectorClock otherClass) {
+        // If concurrent return 0 
         if ( this.isConcurrentWith(otherClass)) { return CONCURRENT; }
+
+        // if lessthan return -1
         if ( this.isLessThan(otherClass)) { return LESS_THAN; }
+
+        // if not less than return 1
         return NOT_LESS_THAN;
     }
 
@@ -87,7 +91,9 @@ public class VectorClock {
     }
 
     public void update(VectorClock otherClock) {
+        // Update the clock based on otherClock
         for (int i = 0; i < this.getVector().size(); i++) {
+            // If any value in otherClock bigger than this.vector, then update that cell
             if (otherClock.getCell(i) > this.getCell(i)) {
                 this.setCell(i, otherClock.getCell(i));
             }
@@ -95,6 +101,7 @@ public class VectorClock {
     }
 
     public void update() {
+        // Increase the owner process' timestamp 1
         this.setCell(this.owner, this.getCell(this.owner) + 1);
     }
 
@@ -104,6 +111,3 @@ public class VectorClock {
     }
 
 }
-
-
-
